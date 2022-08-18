@@ -15,12 +15,12 @@ let cellValues = new Array(9).fill('');
 
 function toggleTurn() {
   //toggle turn
-  currentTurn = currentTurn === TURN.CIRCLE ? TURN.CROSS : TURN.CIRCLE;
+  currentTurn = currentTurn === TURN.CROSS ? TURN.CIRCLE : TURN.CROSS;
 
   //update turn on DOM element
   const currentTurnElement = getCurrentTurnElement();
   if (currentTurnElement) {
-    currentTurnElement.classList.remove('cross', 'circle');
+    currentTurnElement.classList.remove(TURN.CIRCLE, TURN.CROSS);
     currentTurnElement.classList.add(currentTurn);
   }
 }
@@ -30,7 +30,7 @@ function handleCellClick(cellElement, index) {
   const isClick = cellElement.classList.contains(TURN.CROSS) || cellElement.classList.contains(TURN.CIRCLE);
   if (isClick) return;
 
-  //set selected cell
+  //selected cell
   cellElement.classList.add(currentTurn);
 
   //toggle turn
@@ -41,11 +41,11 @@ function handleCellClick(cellElement, index) {
 
 function initCellElementList() {
   const cellElementList = getCellElementList();
+
   cellElementList.forEach((cellElement, index) => {
     cellElement.addEventListener('click', () => handleCellClick(cellElement, index));
   });
 }
-
 /**
  * TODOs
  *
