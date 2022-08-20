@@ -1,6 +1,8 @@
 import { TURN } from './constants.js';
 import { getCellElementAtIdx, getCellElementList, getCurrentTurnElement, getGameStatusElement } from './selectors.js';
+import { checkGameStatus } from './utils.js';
 
+  console.log(checkGameStatus(['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X']));
 // console.log(getCellElementAtIdx(4));
 // console.log(getCellElementList());
 // console.log(getGameStatusElement());
