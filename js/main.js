@@ -34,33 +34,37 @@ function toggleTurn() {
 
 //update game status
 function updateGameStatus(newGameStatus) {
+  //update status
   gameStatus = newGameStatus;
 
   const gameStatusElement = getGameStatusElement();
-  if (!gameStatusElement) return;
-
-  gameStatusElement.textContent = newGameStatus;
+  if (gameStatusElement) gameStatusElement.textContent = newGameStatus;
 }
 
 //show replay button
 function showReplayButton() {
   const replayButton = getReplayButtonElement();
-  if(replayButton) replayButton.classList.add('show');
+  if (replayButton) replayButton.classList.add('show');
+}
+
+//hide replay button
+function hideReplayButton() {
+  const replayButton = getReplayButtonElement();
+  if (replayButton) replayButton.classList.remove('show');
 }
 
 //highlight win cells
-function highlightWinCells(winPositions) {
-  if(!Array.isArray(winPositions) || winPositions.length !== 3) {
+function highlightWinCell(winPositions) {
+  if (!Array.isArray(winPositions) || winPositions.length !== 3) {
     throw new Error('Invalid win positions');
   }
 
-  for(const position of winPositions) {
+  for (const position of winPositions) {
     const cell = getCellElementAtIdx(position);
-    if(cell) cell.classList.add('win');
+    if (cell) cell.classList.add('win');
   }
-
-
 }
+
 
 function handleCellClick(cellElement, index) {
   //check click
@@ -81,28 +85,63 @@ function handleCellClick(cellElement, index) {
   //check game status
   const game = checkGameStatus(cellValues);
   switch (game.status) {
+    case GAME_STATUS.X_WIN:
+    case GAME_STATUS.O_WIN:
+      //update game status
+      updateGameStatus(game.status);
+
+      //show replay button
+      showReplayButton();
+
+      //show highlight cells
+      highlightWinCell(game.winPositions);
+
+      break;
     case GAME_STATUS.ENDED:
       //update game status
       updateGameStatus(game.status);
 
       //show replay button
-      showReplayButton();
-      break;
-
-    case GAME_STATUS.O_WIN:
-    case GAME_STATUS.X_WIN:
-      //update game status
-      updateGameStatus(game.status);
-
-      //show replay button
-      showReplayButton();
-
-      //show highlight win cells
-      highlightWinCells(game.winPositions);
+      showReplayButton(game.winPositions);
       break;
 
     default:
     //playing
+  }
+}
+
+function resetGame() {
+  //reset temp global variables
+  currentTurn = TURN.CROSS;
+  gameStatus = GAME_STATUS.PLAYING;
+  cellValues = cellValues.map(() => '');
+
+  //reset dom element
+  //reset game status
+  updateGameStatus(GAME_STATUS.PLAYING);
+
+  //reset current turn
+  const currentTurnElement = getCurrentTurnElement();
+  if (currentTurnElement) {
+    currentTurnElement.classList.remove(TURN.CIRCLE, TURN.CROSS);
+    currentTurnElement.classList.add(TURN.CROSS);
+  }
+
+  //reset game board
+  const cellElementList = getCellElementList();
+  for (const cellElement of cellElementList) {
+    cellElement.className = '';
+  }
+
+
+  //hide replay button
+  hideReplayButton();
+}
+
+function initReplayButton() {
+  const replayButton = getReplayButtonElement();
+  if (replayButton) {
+    replayButton.addEventListener('click', resetGame);
   }
 }
 
@@ -131,4 +170,5 @@ function initCellElementList() {
 
 (() => {
   initCellElementList();
+  initReplayButton();
 })();
